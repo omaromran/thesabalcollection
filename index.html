@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+    />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#0a0908" />
+    <title>Sabal Pet Portraits</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quattrocento+Sans:wght@400;700&family=Tenor+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/app.css" />
+  </head>
+  <body>
+    <main id="app">
+      <section id="screen-attract" class="screen is-active">
+        <div class="attract-stage" id="attract-stage">
+          <div class="slide is-on" style="background-image: url('./assets/samples/winter-fireside.jpg')"></div>
+          <div class="slide" style="background-image: url('./assets/samples/mykonos.jpg')"></div>
+          <div class="slide" style="background-image: url('./assets/samples/autumn.jpg')"></div>
+          <div class="slide" style="background-image: url('./assets/samples/winter-woods.jpg')"></div>
+          <div class="slide" style="background-image: url('./assets/samples/champagne.jpg')"></div>
+          <div class="slide" style="background-image: url('./assets/samples/holiday.jpg')"></div>
+          <div class="attract-shade"></div>
+        </div>
+        <header class="topbar">
+          <button class="brand-mark" id="brand-mark" type="button" aria-label="The Sabal Collection">
+            <img src="./assets/logo-gold.png" alt="The Sabal Collection" />
+          </button>
+          <span class="chip" id="engine-status">Studio ready</span>
+        </header>
+        <div class="attract-copy">
+          <p class="eyebrow">The Sabal Collection · Festival Studio</p>
+          <h1 class="display gold-text">FREE PHOTOS<br />WITH YOUR PET</h1>
+          <h2>Keep your faces. Step into another world. The candle comes with you.</h2>
+          <div class="attract-actions">
+            <button class="btn btn-gold" id="btn-start" type="button">Tap to start</button>
+            <p class="fine">Vegan · Coconut wax · Pet-safe luxury</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-camera" class="screen">
+        <div class="camera-frame">
+          <video id="camera-video" playsinline muted autoplay></video>
+          <div class="guide"></div>
+          <div class="camera-copy">
+            <p class="eyebrow">Look at the lens</p>
+            <h1 class="display">You + your pet</h1>
+          </div>
+          <div id="countdown" hidden></div>
+        </div>
+        <p class="error" id="camera-error" hidden>
+          Allow camera access in Safari Settings, then tap Start again.
+        </p>
+        <button class="btn btn-ghost btn-small" id="btn-demo" type="button" hidden>
+          Preview with a sample guest
+        </button>
+        <div class="camera-dock">
+          <button class="btn btn-ghost btn-small" id="btn-back-camera" type="button">Back</button>
+          <button class="btn btn-gold" id="btn-snap" type="button">Snap</button>
+          <button class="btn btn-ghost btn-small" id="btn-flip" type="button">Flip camera</button>
+        </div>
+      </section>
+
+      <section id="screen-themes" class="screen">
+        <div class="theme-head">
+          <p class="eyebrow">Six worlds. One portrait.</p>
+          <h1 class="display gold-text">Choose your world</h1>
+        </div>
+        <div class="theme-grid" id="theme-grid"></div>
+        <div class="camera-dock">
+          <button class="btn btn-ghost btn-small" id="btn-back-themes" type="button">Retake photo</button>
+        </div>
+      </section>
+
+      <section id="screen-reveal" class="screen">
+        <div class="reveal-stage">
+          <img id="reveal-image" alt="Your Sabal portrait" />
+        </div>
+        <div class="reveal-dock">
+          <button class="btn btn-ghost btn-small" id="btn-retake" type="button">Retake</button>
+          <div class="mini-row" id="reveal-themes"></div>
+          <button class="btn btn-gold" id="btn-send" type="button">Send my photos</button>
+        </div>
+      </section>
+
+      <section id="screen-contact" class="screen">
+        <form class="panel" id="contact-form">
+          <p class="eyebrow">Your gift is ready</p>
+          <h1 class="display gold-text">Where should we send it?</h1>
+          <p>Email and phone, then the portraits are yours — a little luxury from the booth.</p>
+          <div class="fields">
+            <label>
+              Name
+              <input id="guest-name" name="name" autocomplete="name" />
+            </label>
+            <label>
+              Email
+              <input id="guest-email" name="email" type="email" inputmode="email" autocomplete="email" required />
+            </label>
+            <label>
+              Phone
+              <input id="guest-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required />
+            </label>
+          </div>
+          <p class="error" id="contact-error" hidden></p>
+          <div class="form-actions">
+            <button class="btn btn-ghost btn-small" id="btn-back-contact" type="button">Back</button>
+            <button class="btn btn-gold" type="submit">Send portraits</button>
+          </div>
+        </form>
+      </section>
+
+      <section id="screen-thanks" class="screen">
+        <div class="panel">
+          <p class="eyebrow">See you in the glow</p>
+          <h1 class="display gold-text">You’re in.</h1>
+          <p>
+            We’ll send this portrait to <strong id="thanks-email"></strong>
+            and text <strong id="thanks-phone"></strong>.
+          </p>
+          <img class="thanks-photo" id="thanks-image" alt="Finished portrait" />
+          <p class="fine">thesabalcollection.com · Handmade in the spirit of Pittsburgh</p>
+          <div class="form-actions">
+            <button class="btn btn-gold" id="btn-next-guest" type="button">Next guest</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="magic-veil" hidden>
+      <div>
+        <div class="flame" aria-hidden="true"></div>
+        <p class="eyebrow">Lighting the scene</p>
+        <h2 class="display gold-text" id="magic-line">Winter Fireside</h2>
+      </div>
+    </div>
+
+    <script type="module" src="./js/app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("./sw.js");
+      }
+    </script>
+  </body>
+</html>
