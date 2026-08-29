@@ -103,18 +103,20 @@ function maskBounds(maskBytes, width, height) {
   return { minX, minY, maxX, maxY, count };
 }
 
-function dilateMask(src, width, height, radius = 10) {
+function blurMask(src, width, height, radius = 3) {
   const out = new Uint8ClampedArray(src.length);
-  out.set(src);
-  for (let y = radius; y < height - radius; y += 1) {
-    for (let x = radius; x < width - radius; x += 1) {
-      if (src[y * width + x] > 80) {
-        for (let dy = -radius; dy <= radius; dy += 2) {
-          for (let dx = -radius; dx <= radius; dx += 2) {
-            out[(y + dy) * width + (x + dx)] = 255;
-          }
+  const area = (radius * 2 + 1) ** 2;
+  for (let y = 0; y < height; y += 1) {
+    for (let x = 0; x < width; x += 1) {
+      let sum = 0;
+      for (let dy = -radius; dy <= radius; dy += 1) {
+        const yy = Math.min(height - 1, Math.max(0, y + dy));
+        for (let dx = -radius; dx <= radius; dx += 1) {
+          const xx = Math.min(width - 1, Math.max(0, x + dx));
+          sum += src[yy * width + xx];
         }
       }
+      out[y * width + x] = sum / area;
     }
   }
   return out;
@@ -127,28 +129,31 @@ function cutoutFromMask(image, maskBytes, width, height) {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
   const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const dilated = dilateMask(maskBytes, width, height, 12);
+  const soft = blurMask(maskBytes, width, height, 2);
   for (let y = 0; y < canvas.height; y += 1) {
     const my = Math.min(height - 1, Math.floor((y * height) / canvas.height));
     for (let x = 0; x < canvas.width; x += 1) {
       const mx = Math.min(width - 1, Math.floor((x * width) / canvas.width));
-      const alpha = dilated[my * width + mx];
       const i = (y * canvas.width + x) * 4;
+      let alpha = soft[my * width + mx];
+      const lum = 0.3 * pixels.data[i] + 0.59 * pixels.data[i + 1] + 0.11 * pixels.data[i + 2];
+      if (alpha < 250 && lum > 205) alpha *= 0.12;
+      else if (alpha < 220 && lum > 175) alpha *= 0.45;
       pixels.data[i + 3] = Math.min(pixels.data[i + 3], alpha);
     }
   }
   ctx.putImageData(pixels, 0, 0);
-  const rawBounds = maskBounds(dilated, width, height);
+  const rawBounds = maskBounds(soft, width, height);
   if (!rawBounds) return { canvas, bounds: null };
   const sx = canvas.width / width;
   const sy = canvas.height / height;
   return {
     canvas,
     bounds: {
-      minX: rawBounds.minX * sx,
-      minY: rawBounds.minY * sy,
-      maxX: rawBounds.maxX * sx,
-      maxY: rawBounds.maxY * sy,
+      minX: Math.max(0, rawBounds.minX * sx - 8),
+      minY: Math.max(0, rawBounds.minY * sy - 8),
+      maxX: Math.min(canvas.width, rawBounds.maxX * sx + 8),
+      maxY: Math.min(canvas.height, rawBounds.maxY * sy + 8),
       count: rawBounds.count,
     },
   };
@@ -386,8 +391,12 @@ export async function composePortrait(photo, theme) {
   const destY = height * theme.subject.y + (height - destH) * 0.12;
 
   ctx.save();
-  ctx.shadowColor = "rgba(0,0,0,0.45)";
-  ctx.shadowBlur = 36;
+  ctx.fillStyle = "rgba(0,0,0,0.28)";
+  ctx.beginPath();
+  ctx.ellipse(destX + destW * 0.5, destY + destH * 0.93, destW * 0.28, 18, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowColor = "rgba(0,0,0,0.35)";
+  ctx.shadowBlur = 22;
   ctx.drawImage(
     subjectCanvas,
     bounds.minX,

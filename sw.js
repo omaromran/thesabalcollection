@@ -1,4 +1,4 @@
-const CACHE = "sabal-booth-v1";
+const CACHE = "sabal-booth-v2";
 const ASSETS = [
   "./",
   "./index.html",
