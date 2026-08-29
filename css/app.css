@@ -622,4 +622,10 @@ input:focus {
   .theme-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  .reveal-stage img,
+  .thanks-photo {
+    object-fit: contain;
+    background: #000;
+  }
 }
