@@ -3,6 +3,6 @@
   "private": true,
   "description": "iPad festival photo booth for The Sabal Collection — free pet portraits.",
   "scripts": {
-    "start": "npx --yes serve -l 4173 ."
+    "start": "python3 server.py"
   }
 }

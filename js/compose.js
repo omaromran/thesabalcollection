@@ -70,6 +70,7 @@ function getFaceLandmarker() {
 
 export async function preloadComposer() {
   await Promise.allSettled([
+    fetch("/api/warmup", { method: "POST" }),
     getSegmenter(),
     getFaceLandmarker(),
     loadImage("assets/candle.png"),
@@ -362,7 +363,36 @@ function drawBrandFrame(ctx, width, height, theme, logo) {
   ctx.fillText(theme.scent.toUpperCase(), width - 40, height - 22);
 }
 
+async function photoToBlob(photo) {
+  if (photo instanceof Blob) return photo;
+  if (typeof photo.toBlob === "function") {
+    return await new Promise((resolve) => photo.toBlob(resolve, "image/jpeg", 0.92));
+  }
+  const canvas = document.createElement("canvas");
+  canvas.width = photo.naturalWidth || photo.width;
+  canvas.height = photo.naturalHeight || photo.height;
+  canvas.getContext("2d").drawImage(photo, 0, 0);
+  return await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+}
+
+async function composeOnServer(photo, theme) {
+  const photoBlob = await photoToBlob(photo);
+  const body = new FormData();
+  body.append("photo", photoBlob, "guest.jpg");
+  body.append("theme", theme.id);
+  const response = await fetch("/api/compose", { method: "POST", body });
+  if (!response.ok) throw new Error(`compose ${response.status}`);
+  return response.blob();
+}
+
 export async function composePortrait(photo, theme) {
+  try {
+    const blob = await composeOnServer(photo, theme);
+    return { blob };
+  } catch (error) {
+    console.warn("AI compose unavailable, using local blend", error);
+  }
+
   const width = 1920;
   const height = 1080;
   const canvas = document.createElement("canvas");

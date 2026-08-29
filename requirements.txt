@@ -1,0 +1,7 @@
+flask
+pillow
+opencv-python-headless
+rembg
+onnxruntime
+gradio_client
+requests

@@ -39,12 +39,15 @@ People and pets stay real. The background is replaced, a themed wardrobe overlay
 ## Run locally
 
 ```bash
+pip3 install -r requirements.txt
 npm start
 ```
 
 Then open `http://localhost:4173`. Camera access works on localhost and on HTTPS.
 
 Use `http://localhost:4173/?demo=1` to walk the full flow with a sample guest when a camera is not available.
+
+After you snap and pick a world, the booth sends the photo to `/api/compose`. Flux Kontext rebuilds the scene around their real faces and pet — matching light, clothes, and shadows — so it does not look like a sticker. If that model is unreachable, it falls back to a local AI cutout and blend. The first portrait can take about 30 seconds.
 
 ## Staff / leads
 
