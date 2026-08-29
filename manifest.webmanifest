@@ -1,0 +1,17 @@
+{
+  "name": "Sabal Pet Portraits",
+  "short_name": "Sabal Portraits",
+  "description": "Free luxury portraits of you and your pet — The Sabal Collection festival booth.",
+  "start_url": "./index.html",
+  "display": "fullscreen",
+  "background_color": "#0a0908",
+  "theme_color": "#0a0908",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Sabal Booth Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Quattrocento+Sans:wght@400;700&family=Tenor+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/app.css" />
+    <style>
+      body {
+        overflow: auto;
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 32px 20px 80px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 24px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 12px 10px;
+        border-bottom: 1px solid rgba(246, 239, 227, 0.12);
+        vertical-align: top;
+      }
+      th {
+        color: var(--gold-soft);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+      td img {
+        width: 140px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+      .row-actions {
+        display: flex;
+        gap: 12px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <p class="eyebrow">Staff only</p>
+      <h1 class="display gold-text">Festival leads</h1>
+      <p>Tap the gold logo six times on the booth screen to open this page.</p>
+      <div class="row-actions">
+        <a class="btn btn-ghost btn-small" href="./index.html">Back to booth</a>
+        <button class="btn btn-gold btn-small" id="btn-csv" type="button">Download CSV</button>
+        <button class="btn btn-ghost btn-small" id="btn-clear" type="button">Clear all</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Guest</th>
+            <th>Theme</th>
+            <th>When</th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <script type="module">
+      import { listLeads, clearLeads, leadsToCsv } from "./js/leads.js";
+
+      const rows = document.getElementById("rows");
+
+      function render(leads) {
+        rows.innerHTML = leads
+          .map(
+            (lead) => `
+          <tr>
+            <td>${lead.photo ? `<img src="${lead.photo}" alt="">` : "—"}</td>
+            <td>
+              <strong>${lead.name || "Guest"}</strong><br>
+              ${lead.email}<br>
+              ${lead.phone}
+            </td>
+            <td>${lead.theme || ""}</td>
+            <td>${new Date(lead.createdAt).toLocaleString()}</td>
+          </tr>
+        `,
+          )
+          .join("");
+      }
+
+      const leads = await listLeads();
+      render(leads);
+
+      document.getElementById("btn-csv").addEventListener("click", () => {
+        const blob = new Blob([leadsToCsv(leads)], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "sabal-festival-leads.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById("btn-clear").addEventListener("click", async () => {
+        if (!confirm("Clear every saved guest from this iPad?")) return;
+        await clearLeads();
+        render([]);
+      });
+    </script>
+  </body>
+</html>

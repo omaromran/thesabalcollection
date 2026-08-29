@@ -1,0 +1,8 @@
+{
+  "name": "sabal-festival-portraits",
+  "private": true,
+  "description": "iPad festival photo booth for The Sabal Collection — free pet portraits.",
+  "scripts": {
+    "start": "python3 server.py"
+  }
+}
